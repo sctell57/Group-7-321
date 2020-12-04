@@ -9,7 +9,7 @@ def URLGen(country, job, location):
     URL_Job = "+".join(job.split())
     URL_Location = "+".join(location.split())
     
-
+    #Checks if correct input
     if country == 'Yes' or 'yes':
         URL = "https://www.indeed.com/jobs?q="+str(URL_Job)+"+24"+"%2C000&l="+str(URL_Location)
     else:
@@ -19,10 +19,11 @@ def URLGen(country, job, location):
     return(URL)
 
 def job_title_result(soup):
+    #Create Empty list for jobs
     jobs = []
     for div in soup.find_all(name="div",attrs={"class":"row"}):
         for a in div.find_all(name="a",attrs={"data-tn-element":"jobTitle"}):
-            jobs.append(a["title"])
+            jobs.append(a["title"]) #Search through elements of website that have job title and put it in the lsit
     return(jobs)
 
 def location_result(soup):
@@ -42,16 +43,15 @@ def summary_result(soup):
 
 def findJobs(URL):
     if URL != '':
-        #conducting a request of the stated URL above:
-        # print(URL)
+        #Get URL from requests
         page = requests.get(URL)
         soup = BeautifulSoup(page.text, "html.parser")
-        # print(soup.prettify())
+        
             
         jobs = job_title_result(soup)
         locations = location_result(soup)
         
-        # sumamries = summary_result(soup)
+        # print the final string
 
         string_final = '%-10s%-60s%s'
         # print(string_final % ('', 'Job title', 'Location', 'salary'))
@@ -64,19 +64,19 @@ def PageGen(URL):
         pageUrls.append(URL+"&start="+str(x))
     return pageUrls
 
-# inputs
+#User inputs
 country = input("Do you live in the US?: ")
 job = input("type of job you're looking for: ")
 location = input("What state do you live in: ")
 
-# grab URL
+#Generate URL
 URL = URLGen(country, job, location)
 
 #grab page Urls
 pageUrls = PageGen(URL)
 
 x = 1
-# find jobs
+#Loop through the list of pageURLS
 string_final = '%-10s%-60s%s'
 print(string_final % ('', 'Job title', 'Location'))
 for page in pageUrls:
